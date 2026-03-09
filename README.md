@@ -5,6 +5,11 @@
 
 TurboImage is a high-performance, browser-based image compression and conversion tool. It processes all images locally on your device, ensuring maximum privacy and speed without ever uploading your files to a server.
 
+---
+<img width="1266" height="794" alt="image" src="https://github.com/user-attachments/assets/c8e54c52-844e-4759-8c9a-acb6e47d7544" />
+
+---
+
 ## ✨ Features
 
 - **Extreme Privacy**: All processing happens locally in your browser. No server-side uploads.
