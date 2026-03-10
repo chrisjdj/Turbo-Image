@@ -203,9 +203,9 @@ function App() {
   };
 
   return (
-    <div className="app-container">
+    <main className="app-container">
       <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
-      <div className="header">
+      <header className="header">
         <div className="header-content">
           <div className="logo">
             <Layers className="logo-icon" size={40} />
@@ -215,9 +215,9 @@ function App() {
             <p>Ultra-fast local browser image compression</p>
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="sidebar">
+      <aside className="sidebar">
         <div className="panel settings-group">
           <h3><Settings size={18} className="panel-icon" /> Settings</h3>
           
@@ -262,15 +262,16 @@ function App() {
               className="primary-btn" 
               onClick={handleDownloadZip}
               style={{ width: '100%' }}
+              aria-label="Download all optimized images as a ZIP file"
             >
               <Download size={20} style={{ marginRight: '0.5rem' }}/> 
               Download ZIP
             </button>
           </div>
         )}
-      </div>
+      </aside>
 
-      <div className="main-content">
+      <section className="main-content">
         <div 
           className={`panel upload-zone ${isDragging ? 'drag-active' : ''}`}
           onDragOver={handleDragOver}
@@ -329,6 +330,7 @@ function App() {
                       a.download = `${nameParts.join('.')}_optimized.${options.format}`;
                       a.click();
                     }}
+                    aria-label={`Download optimized ${item.file.name}`}
                   >
                     <Download size={16} />
                   </button>
@@ -337,8 +339,8 @@ function App() {
             ))}
           </div>
         )}
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }
 
