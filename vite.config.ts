@@ -4,12 +4,12 @@ import obfuscator from 'vite-plugin-javascript-obfuscator'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/web-tools/Turbo-Image/',
+  base: './',
   plugins: [
     react(),
     obfuscator({
       include: ['src/**/*.js', 'src/**/*.jsx', 'src/**/*.ts', 'src/**/*.tsx'],
-      exclude: [/node_modules/],
+      exclude: [/node_modules/, /worker/i, /WorkerPool/i, /imageProcessorLogic/i, /imageWorker/i],
       apply: 'build',
       debugger: true,
       options: {
@@ -25,7 +25,10 @@ export default defineConfig({
         log: false,
         numbersToExpressions: true,
         renameGlobals: false,
-        selfDefending: true,
+        renameProperties: false, // Ensure object keys aren't renamed
+        keepJsDocComments: false,
+        keepClassNames: true, // Crucial for Comlink 
+        selfDefending: false, // Sometimes breaks Comlink inside workers
         simplify: true,
         splitStrings: true,
         splitStringsChunkLength: 10,
@@ -36,6 +39,8 @@ export default defineConfig({
         stringArrayIndexShift: true,
         stringArrayRotate: true,
         stringArrayShuffle: true,
+        reservedStrings: ['processImage'], 
+        reservedNames: ['processImage', 'ImageProcessor'], // Don't rename these bindings
         stringArrayWrappersCount: 1,
         stringArrayWrappersChainedCalls: true,
         stringArrayWrappersParametersMaxCount: 2,

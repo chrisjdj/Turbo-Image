@@ -28,6 +28,7 @@ export class WorkerPool {
   }
 
   public async schedule(payload: TaskPayload): Promise<CompressResult> {
+
     return new Promise((resolve, reject) => {
       this.taskQueue.push({ payload, resolve, reject });
       this.processNext();
@@ -35,27 +36,41 @@ export class WorkerPool {
   }
 
   private processNext() {
+
     if (this.taskQueue.length === 0) return;
 
     const availableWorker = this.workers.find(w => !w.busy);
-    if (!availableWorker) return; // All busy
+    if (!availableWorker) {
+
+      return; // All busy
+    }
 
     const task = this.taskQueue.shift();
     if (!task) return;
 
+
+
     const runFallback = (error: any) => {
+
       availableWorker.busy = false;
       // Broaden detection for tainted/origin-clean across browsers
       const errorMsg = error.message || String(error);
       const isTainted = /non-origin-clean|tainted|origin-clean/i.test(errorMsg);
       
       if (isTainted) {
-        console.warn("Worker transfer failed (tainted image). Falling back to main-thread processing.");
+
         processImageInternal(task.payload.bitmap, task.payload.options)
-          .then(result => task.resolve(result))
-          .catch(err => task.reject(err))
+          .then(result => {
+
+             task.resolve(result);
+          })
+          .catch(err => {
+
+             task.reject(err);
+          })
           .finally(() => this.processNext());
       } else {
+
         task.reject(error);
         this.processNext();
       }
@@ -65,16 +80,20 @@ export class WorkerPool {
 
     // Use zero-copy transfer for the ImageBitmap
     try {
+
       availableWorker.api.processImage(Comlink.transfer(task.payload.bitmap, [task.payload.bitmap]), task.payload.options)
         .then(result => {
+
           availableWorker.busy = false;
           task.resolve(result);
           this.processNext();
         })
         .catch(err => {
+
           runFallback(err);
         });
     } catch (err: any) {
+
       runFallback(err);
     }
   }

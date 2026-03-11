@@ -2,21 +2,27 @@ import type { ProcessOptions, CompressResult } from './types';
 
 async function encodeImage(imageData: ImageData, options: ProcessOptions): Promise<ArrayBuffer> {
   const format = options.format;
+
   
   if (format === 'jpeg') {
     const { encode } = await import('@jsquash/jpeg');
-    return await encode(imageData, { quality: options.quality });
+    const res = await encode(imageData, { quality: options.quality });
+    return res;
   } else if (format === 'png') {
     const { encode } = await import('@jsquash/png');
-    return await encode(imageData);
+    const res = await encode(imageData);
+    return res;
   } else if (format === 'webp') {
     const { encode } = await import('@jsquash/webp');
-    return await encode(imageData, { quality: options.quality });
+    const res = await encode(imageData, { quality: options.quality });
+    return res;
   } else if (format === 'avif') {
     const { encode } = await import('@jsquash/avif');
-    return await encode(imageData, { quality: options.quality });
+    const res = await encode(imageData, { quality: options.quality });
+    return res;
   }
   
+  console.error(`[imageProcessorLogic] Unsupported format: ${format}`);
   throw new Error(`Unsupported format: ${format}`);
 }
 
