@@ -4,6 +4,7 @@ import JSZip from 'jszip';
 import { WorkerPool } from './scheduler/WorkerPool';
 import type { ProcessOptions, ImageFormat } from './utils/types';
 import ThemeToggle from './ThemeToggle';
+import { Footer } from './components/Footer';
 import './App.scss';
 
 // Single instance of pool
@@ -340,6 +341,7 @@ function App() {
           </div>
         )}
       </section>
+      <Footer />
     </main>
   );
 }
