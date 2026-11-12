@@ -1,0 +1,22 @@
+// App accent — Turbo-Image (teal). All pairs verified ≥4.5:1 (text) / ≥3:1 (UI).
+@mixin light {
+  --accent: #0f766e;
+  --accent-hover: #115e59;
+  --accent-active: #134e4a;
+  --on-accent: #ffffff;
+  --accent-subtle-bg: #f0fdfa;
+  --accent-subtle-border: #99f6e4;
+  --accent-subtle-text: #0f766e;
+  --focus-ring: #0f766e;
+}
+
+@mixin dark {
+  --accent: #2dd4bf;
+  --accent-hover: #5eead4;
+  --accent-active: #99f6e4;
+  --on-accent: #0a0a0b;
+  --accent-subtle-bg: rgb(45 212 191 / 0.12);
+  --accent-subtle-border: rgb(45 212 191 / 0.3);
+  --accent-subtle-text: #5eead4;
+  --focus-ring: #2dd4bf;
+}

@@ -1,59 +1,55 @@
 import React from 'react';
 import { Shield, ImageIcon, Zap, UploadCloud, Layers, Cpu } from 'lucide-react';
 
-export const Footer: React.FC = () => {
-  return (
-    <footer className="seo-footer">
-      <noscript>
-        <div className="noscript-banner">
-          <p><strong>Note:</strong> TurboImage requires JavaScript to optimize images securely in your browser. All processing happens locally on your device.</p>
-        </div>
-      </noscript>
-      
-      <div className="footer-container">
-        <div className="footer-grid">
-          <div className="footer-main">
-            <h2>About TurboImage</h2>
-            <p>TurboImage is a high-performance, browser-based image optimization suite. Built for speed and total privacy, it allows you to compress and convert images directly on your machine. No data ever leaves your browser, ensuring your photos and documents remain 100% private and secure.</p>
-          </div>
+const FEATURES = [
+  { Icon: Shield, title: '100% client-side', text: 'Your images stay on your device. Nothing is uploaded to a server.' },
+  { Icon: ImageIcon, title: 'Multi-format', text: 'Convert JPEG, PNG, WebP, AVIF, GIF, BMP and SVG into optimized JPEG, PNG, WebP or AVIF.' },
+  { Icon: UploadCloud, title: 'Batch processing', text: 'Optimize dozens of images at once and download them as a ZIP.' },
+  { Icon: Zap, title: 'Fast', text: 'WebAssembly codecs (MozJPEG, OxiPNG, libwebp, libavif) run in parallel workers.' },
+  { Icon: Cpu, title: 'Modern engines', text: 'The latest compression algorithms for the smallest files at your chosen quality.' },
+  { Icon: Layers, title: 'Simple workflow', text: 'Drag and drop or paste, with live stats and a before/after comparison.' },
+];
 
-          <div className="footer-features">
-            <h3>Key Features</h3>
-            <ul className="footer-feature-list">
-              <li>
-                <div className="feature-icon"><Shield size={16} /></div>
-                <strong>100% Client-Side</strong> - Your images stay on your device. No server uploads.
-              </li>
-              <li>
-                <div className="feature-icon"><ImageIcon size={16} /></div>
-                <strong>Multi-Format Support</strong> - Convert JPEG, PNG, WebP, AVIF, GIF, BMP and SVG into optimized JPEG, PNG, WebP or AVIF.
-              </li>
-              <li>
-                <div className="feature-icon"><UploadCloud size={16} /></div>
-                <strong>Batch Processing</strong> - Optimize dozens of images simultaneously with ease.
-              </li>
-              <li>
-                <div className="feature-icon"><Zap size={16} /></div>
-                <strong>Ultra-Fast Compression</strong> - Powered by WebAssembly (MozJPEG/OxiPNG) for native-feel performance.
-              </li>
-              <li>
-                <div className="feature-icon"><Cpu size={16} /></div>
-                <strong>Modern Engines</strong> - Utilizes the latest compression algorithms for maximum size reduction.
-              </li>
-              <li>
-                <div className="feature-icon"><Layers size={16} /></div>
-                <strong>Intuitive Workflow</strong> - Drag and drop or paste, with live compression stats and a before/after comparison.
-              </li>
-            </ul>
-          </div>
+export const Footer: React.FC = () => (
+  <footer className="app-footer">
+    <noscript>
+      <div className="noscript-banner">
+        <strong>Note:</strong> TurboImage needs JavaScript to optimize images in your browser. All processing happens locally on your device.
+      </div>
+    </noscript>
+
+    <div className="container">
+      <div className="app-footer__grid">
+        <div>
+          <h2>About TurboImage</h2>
+          <p>
+            TurboImage is a fast, browser-based image optimizer. It compresses and converts images directly on your
+            machine, so your photos and documents never leave your browser.
+          </p>
         </div>
-        
-        <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} TurboImage. Privacy-respecting and serverless.</p>
+
+        <div>
+          <h3>Key features</h3>
+          <ul className="app-footer__features">
+            {FEATURES.map(({ Icon, title, text }) => (
+              <li key={title}>
+                <span className="feature-icon" aria-hidden>
+                  <Icon size={16} />
+                </span>
+                <strong>{title}</strong>
+                <span>{text}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
-    </footer>
-  );
-};
+
+      <div className="app-footer__bottom">
+        <p>&copy; {new Date().getFullYear()} TurboImage. Private and serverless.</p>
+        <a href="https://chrisjdj.github.io/web-tools/">More free tools</a>
+      </div>
+    </div>
+  </footer>
+);
 
 export default Footer;

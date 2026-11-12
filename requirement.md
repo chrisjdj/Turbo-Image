@@ -344,8 +344,8 @@ Final compression preview
 
 Comparison modes:
 
-* side-by-side
-* slider
+* slider (implemented: before/after dialog with drag handle and keyboard range input)
+* side-by-side (not implemented yet)
 
 ---
 
@@ -384,14 +384,31 @@ Required components:
 
 ## Main Layout
 
-Sections:
+Sections (implemented):
 
-1. Header
+1. Header: brand, privacy badge, "All tools" link, System / Light / Dark theme switch
 2. Upload zone
-3. Image queue
-4. Settings panel
-5. Preview
-6. Download panel
+3. Summary and download panel (savings, progress, Download ZIP, Clear)
+4. Image queue (per-image stats, status, download/retry/remove)
+5. Settings panel
+6. Preview (before/after comparison dialog)
+7. Footer (about and features)
+
+Responsive behaviour (mobile-first):
+
+* below 1024px: one column, in the order upload, summary, queue, settings
+* 1024px and up: sticky 320px settings sidebar on the left, workspace on the right
+* no horizontal scrolling from 320px upwards; touch targets at least 44px on touch devices
+
+## Theme
+
+* Three modes: System (default), Light, Dark
+* System follows the OS colour scheme live
+* A manual choice is stored in localStorage (theme-preference) and shared with the other tools on the same origin
+* The theme is applied before first paint (no flash)
+* Both themes meet WCAG 2.2 AA contrast
+
+See DESIGN.md for tokens, components and breakpoints.
 
 ---
 
@@ -460,7 +477,7 @@ WebGL resizing
 Resize:
 
 ```
-pica.js
+OffscreenCanvas step-down resizing (pica.js was considered but is not used)
 ```
 
 Worker communication:

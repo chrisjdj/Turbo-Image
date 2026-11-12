@@ -1,17 +1,16 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Layers, Info, X } from 'lucide-react';
+import { Info, X } from 'lucide-react';
 import type { ImageFormat, ProcessOptions } from './utils/types';
 import { useImageQueue } from './hooks/useImageQueue';
 import { usePersistentState } from './hooks/usePersistentState';
-import ThemeToggle from './components/ThemeToggle';
+import { useTheme } from './hooks/useTheme';
+import AppHeader from './components/AppHeader';
 import SettingsPanel from './components/SettingsPanel';
 import UploadZone from './components/UploadZone';
 import SummaryBar from './components/SummaryBar';
 import QueueList from './components/QueueList';
 import CompareModal from './components/CompareModal';
 import { Footer } from './components/Footer';
-
-type Theme = 'dark' | 'light';
 
 const DEFAULT_OPTIONS: ProcessOptions = { format: 'webp', quality: 80 };
 const FORMATS: ImageFormat[] = ['jpeg', 'png', 'webp', 'avif'];
@@ -21,28 +20,12 @@ const isProcessOptions = (v: unknown): v is ProcessOptions => {
   return !!o && FORMATS.includes(o.format) && typeof o.quality === 'number' && o.quality >= 1 && o.quality <= 100;
 };
 
-function getInitialTheme(): Theme {
-  // index.html sets data-theme before React loads, so there is no flash of the wrong theme.
-  const attr = document.documentElement.getAttribute('data-theme');
-  if (attr === 'dark' || attr === 'light') return attr;
-  return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-}
-
 function App() {
   const [options, setOptions] = usePersistentState<ProcessOptions>('turbo-options', DEFAULT_OPTIONS, isProcessOptions);
-  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+  const { preference: theme, setPreference: setTheme } = useTheme();
   const [compareId, setCompareId] = useState<string | null>(null);
   const queue = useImageQueue();
   const { addFiles } = queue;
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    try {
-      localStorage.setItem('theme', theme);
-    } catch {
-      /* ignore */
-    }
-  }, [theme]);
 
   const handleFiles = useCallback((files: File[]) => addFiles(files, options), [addFiles, options]);
 
@@ -65,60 +48,57 @@ function App() {
   const closeCompare = useCallback(() => setCompareId(null), []);
 
   return (
-    <main className="app-container">
-      <ThemeToggle theme={theme} toggleTheme={() => setTheme(t => (t === 'dark' ? 'light' : 'dark'))} />
-      <header className="header">
-        <div className="header-content">
-          <div className="logo">
-            <Layers className="logo-icon" size={40} aria-hidden />
-          </div>
-          <div className="title-area">
-            <h1>TurboImage</h1>
-            <p>Ultra-fast local browser image compression</p>
+    <>
+      <a className="skip-link" href="#main">Skip to main content</a>
+      <AppHeader theme={theme} onThemeChange={setTheme} />
+
+      <main id="main" className="app-main" tabIndex={-1}>
+        <div className="container">
+          <h1 className="sr-only">TurboImage — compress and convert images in your browser</h1>
+          <div className="tool-layout">
+            <section className="tool-layout__workspace" aria-label="Images">
+              <UploadZone onFiles={handleFiles} />
+
+              {queue.notice && (
+                <div className="alert alert--warning" role="status">
+                  <Info size={16} aria-hidden />
+                  <span className="alert__body">{queue.notice}</span>
+                  <button type="button" className="btn btn--ghost btn--icon btn--sm" onClick={queue.dismissNotice} aria-label="Dismiss message">
+                    <X size={16} aria-hidden />
+                  </button>
+                </div>
+              )}
+
+              {queue.items.length > 0 && (
+                <>
+                  <SummaryBar items={queue.items} onDownloadAll={queue.downloadAll} onClearAll={queue.clearAll} />
+                  <QueueList
+                    items={queue.items}
+                    onCompare={item => setCompareId(item.id)}
+                    onDownload={queue.downloadOne}
+                    onRetry={item => queue.retry(item.id, options)}
+                    onRemove={item => queue.remove(item.id)}
+                  />
+                </>
+              )}
+            </section>
+
+            <aside className="tool-layout__sidebar" aria-label="Output settings">
+              <SettingsPanel
+                options={options}
+                onChange={setOptions}
+                canReprocess={queue.items.length > 0}
+                onReprocessAll={() => queue.reprocessAll(options)}
+              />
+            </aside>
           </div>
         </div>
-      </header>
-
-      <aside className="sidebar">
-        <SettingsPanel
-          options={options}
-          onChange={setOptions}
-          canReprocess={queue.items.length > 0}
-          onReprocessAll={() => queue.reprocessAll(options)}
-        />
-      </aside>
-
-      <section className="main-content">
-        <UploadZone onFiles={handleFiles} />
-
-        {queue.notice && (
-          <div className="notice" role="status">
-            <Info size={16} aria-hidden />
-            <span>{queue.notice}</span>
-            <button type="button" className="icon-btn subtle" onClick={queue.dismissNotice} aria-label="Dismiss message">
-              <X size={14} aria-hidden />
-            </button>
-          </div>
-        )}
-
-        {queue.items.length > 0 && (
-          <>
-            <SummaryBar items={queue.items} onDownloadAll={queue.downloadAll} onClearAll={queue.clearAll} />
-            <QueueList
-              items={queue.items}
-              onCompare={item => setCompareId(item.id)}
-              onDownload={queue.downloadOne}
-              onRetry={item => queue.retry(item.id, options)}
-              onRemove={item => queue.remove(item.id)}
-            />
-          </>
-        )}
-      </section>
+      </main>
 
       <Footer />
 
       {compareItem && <CompareModal item={compareItem} onClose={closeCompare} onDownload={queue.downloadOne} />}
-    </main>
+    </>
   );
 }
 

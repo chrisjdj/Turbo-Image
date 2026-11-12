@@ -31,39 +31,42 @@ export const SummaryBar: React.FC<SummaryBarProps> = ({ items, onDownloadAll, on
   };
 
   return (
-    <div className="panel summary-bar">
-      <div className="summary-stats" aria-live="polite">
-        <div className="summary-headline">
+    <div className="card summary-bar">
+      <div className="summary-bar__stats" aria-live="polite">
+        <div className="summary-bar__headline">
           {done.length > 0 && saved > 0 ? (
-            <>Saved <strong>{formatSize(saved)}</strong> <span className="reduction">{change}%</span></>
+            <>
+              <span>Saved <strong>{formatSize(saved)}</strong></span>
+              <span className="badge badge--success">{change}%</span>
+            </>
           ) : done.length > 0 ? (
             <>Total {formatSize(resultTotal)}</>
           ) : (
             <>Optimizing…</>
           )}
         </div>
-        <div className="summary-sub">
+        <div className="summary-bar__sub">
           {finished}/{items.length} processed
           {done.length > 0 && <> · {formatSize(originalTotal)} → {formatSize(resultTotal)}</>}
         </div>
         {busy && (
           <div className="progress" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress} aria-label="Batch progress">
-            <div className="progress-fill" style={{ width: `${progress}%` }} />
+            <div className="progress__fill" style={{ width: `${progress}%` }} />
           </div>
         )}
       </div>
 
-      <div className="summary-actions">
+      <div className="summary-bar__actions">
         <button
           type="button"
-          className="primary-btn"
+          className="btn btn--primary"
           onClick={handleZip}
           disabled={done.length === 0 || zipping}
         >
-          {zipping ? <Loader2 size={18} className="spin" aria-hidden /> : <Download size={18} aria-hidden />}
+          {zipping ? <Loader2 size={16} className="spin" aria-hidden /> : <Download size={16} aria-hidden />}
           {zipping ? 'Zipping…' : `Download ZIP${done.length ? ` (${done.length})` : ''}`}
         </button>
-        <button type="button" className="secondary-btn" onClick={onClearAll} aria-label="Clear all images">
+        <button type="button" className="btn btn--secondary" onClick={onClearAll} aria-label="Clear all images">
           <Trash2 size={16} aria-hidden /> Clear
         </button>
       </div>
