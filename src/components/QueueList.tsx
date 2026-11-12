@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle, Download, RotateCcw, X, AlertCircle, Loader2, Clock } from 'lucide-react';
+import { CheckCircle2, Download, RotateCcw, X, AlertCircle, Loader2, Clock } from 'lucide-react';
 import type { QueueItem } from '../hooks/useImageQueue';
 import { formatSize, percentChange } from '../utils/format';
 
@@ -11,24 +11,11 @@ interface QueueListProps {
   onRemove: (item: QueueItem) => void;
 }
 
-const STATUS_LABEL: Record<QueueItem['status'], string> = {
-  queued: 'Queued',
-  processing: 'Processing',
-  done: 'Done',
-  error: 'Error',
-};
-
-const StatusIcon: React.FC<{ status: QueueItem['status'] }> = ({ status }) => {
-  switch (status) {
-    case 'done':
-      return <CheckCircle size={14} aria-hidden />;
-    case 'processing':
-      return <Loader2 size={14} className="spin" aria-hidden />;
-    case 'error':
-      return <AlertCircle size={14} aria-hidden />;
-    default:
-      return <Clock size={14} aria-hidden />;
-  }
+const STATUS: Record<QueueItem['status'], { label: string; badge: string; Icon: typeof Clock }> = {
+  queued: { label: 'Queued', badge: '', Icon: Clock },
+  processing: { label: 'Processing', badge: 'badge--info status--processing', Icon: Loader2 },
+  done: { label: 'Done', badge: 'badge--success', Icon: CheckCircle2 },
+  error: { label: 'Error', badge: 'badge--danger', Icon: AlertCircle },
 };
 
 const QueueRow: React.FC<{ item: QueueItem } & Omit<QueueListProps, 'items'>> = ({
@@ -40,65 +27,60 @@ const QueueRow: React.FC<{ item: QueueItem } & Omit<QueueListProps, 'items'>> = 
 }) => {
   const isDone = item.status === 'done' && !!item.resultBlob;
   const change = isDone ? percentChange(item.file.size, item.resultBlob!.size) : 0;
+  const status = STATUS[item.status];
 
   return (
     <li className="queue-item">
       <button
         type="button"
-        className="preview-btn"
+        className="queue-item__thumb checkerboard"
         onClick={() => onCompare(item)}
         disabled={!isDone}
         aria-label={isDone ? `Compare original and optimized ${item.file.name}` : `Preview of ${item.file.name}`}
       >
-        <img
-          src={item.resultUrl ?? item.originalUrl}
-          alt=""
-          className="preview"
-          loading="lazy"
-          decoding="async"
-        />
+        <img src={item.resultUrl ?? item.originalUrl} alt="" loading="lazy" decoding="async" />
       </button>
 
-      <div className="details">
-        <div className="name" title={item.file.name}>{item.file.name}</div>
-        <div className="stats">
+      <div className="queue-item__details">
+        <div className="queue-item__name" title={item.file.name}>{item.file.name}</div>
+        <div className="queue-item__stats">
           <span>{formatSize(item.file.size)}</span>
           {isDone && (
             <>
               <span>→ {formatSize(item.resultBlob!.size)}</span>
               {item.keptOriginal ? (
-                <span className="badge-muted" title="The re-encoded file was larger, so the original was kept.">
+                <span className="badge" title="The re-encoded file was larger, so the original was kept.">
                   Already optimal
                 </span>
               ) : (
-                <span className={`reduction ${change > 0 ? 'increase' : ''}`}>
+                <span className={`badge ${change > 0 ? 'badge--danger' : 'badge--success'}`}>
                   {change > 0 ? '+' : ''}{change}%
                 </span>
               )}
-              <span className="time">⏱ {Math.round(item.timeMs ?? 0)}ms</span>
+              <span>{Math.round(item.timeMs ?? 0)} ms</span>
             </>
           )}
-          {item.status === 'error' && item.errorMsg && <span className="error-text">{item.errorMsg}</span>}
+          {item.status === 'error' && item.errorMsg && <span className="queue-item__error">{item.errorMsg}</span>}
         </div>
       </div>
 
-      <div className={`status ${item.status}`}>
-        <StatusIcon status={item.status} />
-        <span>{STATUS_LABEL[item.status]}</span>
-      </div>
+      <span className={`badge ${status.badge} queue-item__status`}>
+        <status.Icon size={12} aria-hidden />
+        {status.label}
+      </span>
 
-      <div className="row-actions">
+      <div className="queue-item__actions">
         {isDone && (
-          <button type="button" className="icon-btn" onClick={() => onDownload(item)} aria-label={`Download optimized ${item.file.name}`} title="Download">
+          <button type="button" className="btn btn--ghost btn--icon" onClick={() => onDownload(item)} aria-label={`Download optimized ${item.file.name}`} title="Download">
             <Download size={16} aria-hidden />
           </button>
         )}
         {item.status === 'error' && (
-          <button type="button" className="icon-btn" onClick={() => onRetry(item)} aria-label={`Retry ${item.file.name}`} title="Retry">
+          <button type="button" className="btn btn--ghost btn--icon" onClick={() => onRetry(item)} aria-label={`Retry ${item.file.name}`} title="Retry">
             <RotateCcw size={16} aria-hidden />
           </button>
         )}
-        <button type="button" className="icon-btn subtle" onClick={() => onRemove(item)} aria-label={`Remove ${item.file.name}`} title="Remove">
+        <button type="button" className="btn btn--ghost btn--icon" onClick={() => onRemove(item)} aria-label={`Remove ${item.file.name}`} title="Remove">
           <X size={16} aria-hidden />
         </button>
       </div>
@@ -107,8 +89,8 @@ const QueueRow: React.FC<{ item: QueueItem } & Omit<QueueListProps, 'items'>> = 
 };
 
 export const QueueList: React.FC<QueueListProps> = ({ items, ...handlers }) => (
-  <section className="queue-list" aria-label="Processing queue">
-    <ul>
+  <section className="card" aria-label="Processing queue">
+    <ul className="queue">
       {items.map(item => (
         <QueueRow key={item.id} item={item} {...handlers} />
       ))}

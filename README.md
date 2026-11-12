@@ -6,7 +6,14 @@
 TurboImage is a high-performance, browser-based image compression and conversion tool. It processes all images locally on your device, ensuring maximum privacy and speed without ever uploading your files to a server.
 
 ---
-<img width="1266" height="794" alt="image" src="https://github.com/user-attachments/assets/c8e54c52-844e-4759-8c9a-acb6e47d7544" />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark-desktop.png" />
+  <img alt="TurboImage: upload zone, savings summary and processed image queue beside the output settings" src="docs/screenshots/light-desktop.png" width="1280" />
+</picture>
+
+| Light | Dark |
+|---|---|
+| <img alt="TurboImage on a phone, light theme" src="docs/screenshots/light-mobile.png" width="260" /> | <img alt="TurboImage on a phone, dark theme" src="docs/screenshots/dark-mobile.png" width="260" /> |
 
 ---
 
@@ -18,7 +25,10 @@ TurboImage is a high-performance, browser-based image compression and conversion
 - **Format Support**: Convert and optimize JPEG, PNG, WebP, and AVIF.
 - **Batch Processing**: Parallelized optimization using a dynamic worker thread pool.
 - **Zero-Copy Memory**: Uses `ImageBitmap` transfers for minimal memory overhead.
-- **Modern UI**: Clean, responsive interface with Dark/Light mode support.
+- **Before/After Compare**: Slider comparison of the original and optimized image.
+- **Modern UI**: Clean, mobile-first interface that works from 320px phones to wide desktops.
+- **System / Light / Dark Theme**: Follows your OS setting by default (and updates live when it changes); a manual choice is remembered across all the tools in the suite.
+- **Accessible**: WCAG 2.2 AA contrast in both themes, full keyboard support, skip link, native dialogs and reduced-motion support.
 
 ## 🛠️ Tech Stack
 
@@ -28,19 +38,23 @@ TurboImage is a high-performance, browser-based image compression and conversion
   - OffscreenCanvas for hardware-accelerated resizing
   - custom `WorkerPool` for parallel task scheduling
 - **Icons**: Lucide React
-- **Styling**: SCSS (Sass)
-- **Utilities**: Comlink, JSZip, Pica
+- **Styling**: SCSS (Sass) with a shared token-based design system (see [DESIGN.md](./DESIGN.md))
+- **Font**: Inter Variable (self-hosted via Fontsource)
+- **Utilities**: Comlink, JSZip
 
 ## 📁 Project Structure
 
 ```text
 /src
-  /components      # UI components (ThemeToggle, etc.)
+  /components      # AppHeader, ThemeSwitch, UploadZone, SettingsPanel, SummaryBar, QueueList, CompareModal, Footer
+  /hooks           # useImageQueue, usePersistentState, useTheme
   /scheduler       # WorkerPool management and task scheduling
+  /styles          # Design system: tokens, theme, base, components, shell (shared) + app styles
   /utils           # Shared logic (image processing, types)
   /workers         # Web Workers for off-main-thread processing
-  App.tsx          # Main application logic and UI
-  App.scss         # Global styles and theme definitions
+  App.tsx          # Page layout and app state
+/docs/screenshots  # README screenshots
+DESIGN.md          # Design system reference (tokens, theme, layout, components)
 ```
 
 ## 🚀 Getting Started
@@ -59,6 +73,16 @@ TurboImage is a high-performance, browser-based image compression and conversion
    ```bash
    npm run build
    ```
+
+4. **Lint and Test**:
+   ```bash
+   npm run lint
+   npm test
+   ```
+
+## 🎨 Design & Theming
+
+The UI uses the design system shared by all the tools in the suite. Read [DESIGN.md](./DESIGN.md) before changing styles: components must use semantic tokens (no hard-coded colours) and work in both themes at every breakpoint. Release notes are in [CHANGELOG.md](./CHANGELOG.md).
 
 ## 📄 License
 

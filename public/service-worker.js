@@ -1,5 +1,5 @@
 // Bump on breaking SW changes; hashed assets are versioned by their filenames.
-const CACHE_NAME = 'turboimage-cache-v2';
+const CACHE_NAME = 'turboimage-cache-v3';
 const APP_SHELL = ['./', './index.html', './manifest.json', './favicon.png'];
 
 self.addEventListener('install', (event) => {
