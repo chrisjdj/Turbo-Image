@@ -7,19 +7,17 @@ interface ThemeToggleProps {
 }
 
 const ThemeToggle: React.FC<ThemeToggleProps> = ({ theme, toggleTheme }) => {
+  const next = theme === 'dark' ? 'light' : 'dark';
   return (
-    <button 
-      className="theme-toggle" 
+    <button
+      type="button"
+      className="theme-toggle"
       onClick={toggleTheme}
-      title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-      aria-label="Toggle theme"
+      title={`Switch to ${next} mode`}
+      aria-label={`Switch to ${next} mode`}
     >
       <div className={`icon-container ${theme}`}>
-        {theme === 'dark' ? (
-          <Moon size={20} className="moon-icon" />
-        ) : (
-          <Sun size={20} className="sun-icon" />
-        )}
+        {theme === 'dark' ? <Moon size={20} className="moon-icon" aria-hidden /> : <Sun size={20} className="sun-icon" aria-hidden />}
       </div>
     </button>
   );

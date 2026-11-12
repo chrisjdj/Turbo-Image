@@ -26,7 +26,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <div className="feature-icon"><ImageIcon size={16} /></div>
-                <strong>Multi-Format Support</strong> - Convert between JPEG, PNG, WebP, AVIF, and SVG.
+                <strong>Multi-Format Support</strong> - Convert JPEG, PNG, WebP, AVIF, GIF, BMP and SVG into optimized JPEG, PNG, WebP or AVIF.
               </li>
               <li>
                 <div className="feature-icon"><UploadCloud size={16} /></div>
@@ -42,7 +42,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <div className="feature-icon"><Layers size={16} /></div>
-                <strong>Intuitive Workflow</strong> - Simple drag-and-drop interface with real-time compression stats.
+                <strong>Intuitive Workflow</strong> - Drag and drop or paste, with live compression stats and a before/after comparison.
               </li>
             </ul>
           </div>
